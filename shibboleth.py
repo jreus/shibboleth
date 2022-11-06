@@ -200,12 +200,16 @@ if __name__ == "__main__":
         help="Show list of audio devices and exit"
     )
 
+    parser.add_argument("--input_only", action="store_true", help="If present, no synthesis is done - only text input to the texteditor GUI.")
+
     namespace, remaining_args = parser.parse_known_args()
 
     if namespace.list_devices:
         import sounddevice as sd
         print(sd.query_devices())
         parser.exit(0)
+
+    INPUT_ONLY = namespace.input_only
 
     parser.add_argument(
         "--input-device", type=int_or_str,
@@ -225,7 +229,7 @@ if __name__ == "__main__":
         "--model-path",
         type=Path,
         default=None,
-        required=True,
+        required=(not INPUT_ONLY),
         help='Path to root directory of TTS model. Files expected in this dir: model_file.pth, config.json, and more depending on model type'
     )
 
@@ -253,6 +257,7 @@ if __name__ == "__main__":
     SetLogLevel(0)
 
     print("Initializing VOSK model...")
+    
     # VOSK Speech Recognition Model
     vosk_model = Model(lang="en-us")
     # You can also init model by name or with a folder path

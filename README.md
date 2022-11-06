@@ -1,23 +1,54 @@
 # Shibboleth Performance Interface
 
+Some useful software:
+[homebrew](https://brew.sh/)
+[vscode](https://code.visualstudio.com/download)
+[miniconda](https://docs.conda.io/en/latest/miniconda.html)
+
+
+## OSX
+
+On OSX Catalina and later you may need to set up miniconda to zsh shell.
+Or, easier, download the 3.9 package (make sure you use python 3.9!)
+and install as usual
+
+Run:
+
+```
+miniconda/lib/activate
+conda init zsh
+```
+
+And then restart your terminal window before proceeding with setting up your environments.
+
+Also good ideas:
+```
+conda update conda
+conda update pip
+```
+
+
 ## Setting up the Environment
 
 Before running Shibboleth you'll need to have an anaconda/conda environment
 set up with a few key dependencies.
 
-Most importantly:
+
+Most importantly, these dependencies:
 
 * [sounddevice](https://python-sounddevice.readthedocs.io/en/0.4.5/)
 * [VOSK](https://alphacephei.com/vosk/)
 * [COQUI TTS](https://github.com/coqui-ai/TTS)
 
-If you're lucky, this is just a matter of creating a conda environment and
-installing sounddevice, VOSK and TTS using pip.
+If you're lucky, this is just a matter of creating a conda environment and installing sounddevice, VOSK and TTS using pip.
+
+NOTE: on mac you may need to install this stuff into your conda base installation... permissions seem to be a constant nightmare otherwise, and I haven't figured out a way to get python to run with full permissions otherwise...
 
 ```
-conda env create -n shibboleth
+conda create -n shibboleth python=3.9
 conda activate shibboleth
 conda install -c conda-forge python-sounddevice
+conda install -c conda-forge librosa
 pip install TTS
 pip install vosk
 ```
