@@ -21,7 +21,7 @@ conda init zsh
 
 And then restart your terminal window before proceeding with setting up your environments.
 
-Also good ideas:
+After that you should update conda.
 ```
 conda update conda
 conda update pip
@@ -42,11 +42,10 @@ Most importantly, these dependencies:
 
 If you're lucky, this is just a matter of creating a conda environment and installing sounddevice, VOSK and TTS using pip.
 
-NOTE: on mac you may need to install this stuff into your conda base installation... permissions seem to be a constant nightmare otherwise, and I haven't figured out a way to get python to run with full permissions otherwise...
-
 ```
 conda create -n shibboleth python=3.9
 conda activate shibboleth
+conda install flask
 conda install -c conda-forge python-sounddevice
 conda install -c conda-forge librosa
 pip install TTS
@@ -56,7 +55,7 @@ pip install vosk
 ## Preparing your TTS Model Checkpoints
 
 Your TTS model checkpoints must use the following directory structure and file
-naming conventions:
+naming conventions, it should contain one `pth` and one `json` file:
 
 - MODEL_ROOT_DIRECTORY
   - model_file.pth

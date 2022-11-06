@@ -55,7 +55,7 @@ class Window(QWidget):
         messageBox = QMessageBox()
         title = "Quit Application?"
         message = "WARNING !!\n\nIf you quit without saving, any changes made to the file will be lost.\n\nSave file before quitting?"
-       
+
         reply = messageBox.question(self, title, message, messageBox.Yes | messageBox.No |
                 messageBox.Cancel, messageBox.Cancel)
         if reply == messageBox.Yes:
