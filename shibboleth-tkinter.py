@@ -16,7 +16,6 @@ from tkinter import Tk, Button, Text, INSERT, END
 import tkinter.ttk as ttk
 
 from voicesynth import VoiceSynth
-
 from vosk import Model, KaldiRecognizer, SetLogLevel
 
 def int_or_str(text):
@@ -190,6 +189,7 @@ class App:
 if __name__ == "__main__":
     # python test_vosk_coqui_communication.py --model-path ../../../outputs/checkpoints/hifi54_390k/
     # python test_vosk_coqui_communication
+    import sounddevice as sd
 
     # Parse list-devices
     parser = argparse.ArgumentParser(add_help=False)
@@ -205,7 +205,6 @@ if __name__ == "__main__":
     namespace, remaining_args = parser.parse_known_args()
 
     if namespace.list_devices:
-        import sounddevice as sd
         print(sd.query_devices())
         parser.exit(0)
 
@@ -257,7 +256,7 @@ if __name__ == "__main__":
     SetLogLevel(0)
 
     print("Initializing VOSK model...")
-    
+
     # VOSK Speech Recognition Model
     vosk_model = Model(lang="en-us")
     # You can also init model by name or with a folder path

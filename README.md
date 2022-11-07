@@ -48,6 +48,7 @@ conda activate shibboleth
 conda install flask
 conda install -c conda-forge python-sounddevice
 conda install -c conda-forge librosa
+conda update scipy
 pip install TTS
 pip install vosk
 ```

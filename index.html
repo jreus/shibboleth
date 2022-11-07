@@ -1,13 +1,170 @@
-<html>
-<head></head>
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Shibboleth</title>
+    <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
+    html, body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
 
-<body>
-<textarea>
+    article, header, footer {
+      display: block;
+    }
 
-    
-</textarea>
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 0.8rem;
+    }
 
+    h1, h2, h3, h4 {
+      font-size: 1.2rem;
+      text-align: center;
+      font-weight: normal;
+      padding: 0 0 0 0;
+      margin-bottom: 2rem;
+    }
 
-</body>
+    h1 {
+      font-size: 3rem;
+    }
+
+    h2 {
+      font-size: 2rem;
+    }
+
+    #container {
+      height: 100%;
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: center;
+    }
+
+    form {
+      width: 100vw;
+      height: 100vh;
+      padding: 0;
+      margin: 0;
+      border: none;
+      border-style: none;
+      border-color: Transparent;
+      overflow: auto;
+      outline: none;
+    }
+
+    textarea {
+      font-size: 3em;
+      margin: auto;
+      width: 90vw;
+      height: 90vh;
+      padding: 0;
+      margin: 0;
+      border: none;
+      border-style: none;
+      border-color: Transparent;
+      overflow: auto;
+      outline: none;
+    }
+
+    /* Adjustments for wider screens */
+    @media all and (min-width: 800px) {
+      /* Don't take all the space as readability is lost when line length
+         goes past a certain size */
+      .wrapper {
+        width: 90%;
+        max-width: 2000px;
+        margin: 0 auto;
+      }
+    }
+    </style>
+  </head>
+  <body>
+
+    <div id="container">
+      <!-- See: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea -->
+      <textarea spellcheck="false" wrap="soft" autocomplete="off" autocorrect="off" autofocus="true" form="textForm" id="textarea" name="text"></textarea>
+
+        <form id="textForm" name="textForm" action="" method="post" class="info" enctype="multipart/form-data">
+          <input type="hidden" name="formid" value="1" />
+        </form>
+    </div>
+
+    <script>
+      let textArea = document.querySelector("#textarea")
+      let lastText = textArea.value;
+
+      // Create WebSocket connection.
+      const socket = new WebSocket('ws://localhost:8765');
+
+      // Connection opened
+      socket.addEventListener('open', (event) => {
+          socket.send('Hello Server!');
+      });
+
+      // Listen for messages
+      socket.addEventListener('message', (event) => {
+          console.log('Message from server ', event.data);
+      });
+
+      // async function sendPostRequest(text, model) {
+      //     let url = '';
+      //     let data = {'text': text, 'cmd': 'synthesize', 'model': model};
+      //     let res = await fetch(url, {
+      //         method: 'POST',
+      //         headers: {
+      //             'Content-Type': 'application/json',
+      //         },
+      //         body: JSON.stringify(data),
+      //     });
+      //
+      //     if (res.ok) {
+      //         // let text = await res.text();
+      //         // return text;
+      //         let ret = await res.json();
+      //         return ret;
+      //     } else {
+      //         return `HTTP error: ${res.status}`;
+      //     }
+      // }
+
+      function sendTextUpdate() {
+        let currentText = textArea.value;
+        // If lastText is present in currentText, remove it and examine what is left.
+        if(currentText.includes(lastText)) {
+          // Remove lastText from currentText
+
+          // TODO: Do something more sophisticated here. So that we don't chop words in half
+          let newText = currentText.replace(lastText, "");
+          if(newText != "") {
+            console.log(newText);
+            socket.send(newText);
+            // sendPostRequest(newText).then(data => {
+            //     console.log("Response:", data);
+            // });
+          }
+        }
+        lastText = currentText;
+      }
+
+      // Regularly post the text to the server every 5 seconds..
+      let timer = setInterval(sendTextUpdate, 5000);
+
+    </script>
+
+    <!-- script type="module" src="js/app.js"></script -->
+
+  </body>
 </html>
