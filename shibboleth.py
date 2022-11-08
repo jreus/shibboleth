@@ -6,16 +6,17 @@ import json
 from pathlib import Path
 import asyncio
 import websockets
-import librosa # this is necessary for some reason...
 import sounddevice as sd
-#import numpy as np
+import numpy as np
 from datetime import datetime
+
 import torch
+
 from TTS.utils.synthesizer import Synthesizer
 torch.set_grad_enabled(False) # we're only doing inference
 
-
 import voicesynth
+import librosa # this is necessary for some reason on some systems, and breaks others... also depends when you import it..
 
 class ShibbolethWSS(object):
     async def handler(self, websocket, path):
@@ -25,7 +26,10 @@ class ShibbolethWSS(object):
             if message == "Handshake!":
                 pass # ignore...
             else:
-                self.synthesize_and_play(text=message)
+                if message.strip() != "":
+                    self.synthesize_and_play(text=message)
+                else:
+                    print("...ignoring empty text...")
                 await websocket.send(message) # echo message back to the client
 
     async def main(self, synth, system_samplerate, system_device):

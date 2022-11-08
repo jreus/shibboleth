@@ -27,6 +27,41 @@ conda update conda
 conda update pip
 ```
 
+## Disable Audio Muting during Dictation on Mac
+
+You may also need to disable audio muting when running dictation.
+See: https://apple.stackexchange.com/questions/110839/how-to-keep-sound-from-muting-while-using-dictation
+\
+
+The trick to doing this is to run the following commands:
+```
+defaults write com.apple.SpeechRecognitionCore AllowAudioDucking -bool NO
+defaults write com.apple.speech.recognition.AppleSpeechRecognition.prefs DictationIMAllowAudioDucking -bool NO
+```
+
+After doing this turn off dictation in Systems Preferences, wait a few seconds and then re-enable it. You should now be able to dictate while audio is playing. I’ve only tried this while using a headset/headphones, it’s probably not advisable without. :)
+
+To restore your system to it’s virginal state, run these commands in Terminal and then restart dictation:
+
+To restore the previous configuration use
+```
+defaults delete com.apple.SpeechRecognitionCore AllowAudioDucking
+defaults delete com.apple.speech.recognition.AppleSpeechRecognition.prefs DictationIMAllowAudioDucking
+```
+
+The above doesn't work after Catalina...
+
+This preference was made visible in System Preferences, so you don't need to run Terminal commands any more. Go to the Accessibility preference pane, choose Dictation and disable Mute audio output while dictating.
+
+See: https://apple.stackexchange.com/questions/399427/catalina-override-automatic-mute-triggered-by-dictation
+
+```
+defaults write com.apple.SpeechRecognitionCore AllowAudioDucking -bool NO
+defaults read com.apple.SpeechRecognitionCore
+
+defaults write com.apple.speech.recognition.AppleSpeechRecognition.prefs DictationIMAllowAudioDucking -bool NO
+defaults read com.apple.speech.recognition.AppleSpeechRecognition.prefs
+```
 
 ## Setting up the Environment
 
@@ -48,13 +83,7 @@ conda activate shibboleth
 conda install -c conda-forge python-sounddevice
 conda install -c conda-forge websockets
 
-(all in one on linux - this seems to also install python 3.10 ...or am I crazy?)
-conda install -c conda-forge numpy=1.22.4 librosa=0.8.0 numba=0.55.2 python-sounddevice websockets
-
 pip install TTS
-
-(optional, but helps with audio errors on some systems)
-conda install -c conda-forge librosa=0.8
 
 (at this point test that importing librosa and TTS works!)
 
@@ -64,18 +93,16 @@ For GCC errors, maybe you need to update scipy
 conda update scipy
 
 Or you might need to update GCC...
-conda install -c anaconda libstdcxx-ng
-conda install -c conda-forge libstdcxx-ng
-or
 conda install -c conda-forge gcc=12.1.0
 
-conda install -c conda-forge gxx_linux-64==11.1.0
-It installs the latest version of GlibC compatible with your Conda environment.
-
-You might need to set up some simlinks to fix librosa errors on mac...
+You might need to set up some simlinks to fix librosa errors...
 ln -s libvorbis.0.dylib libvorbis.0.4.9.dylib
 ln -s libvorbisenc.2.dylib libvorbisenc.2.0.12.dylib
 
+You could also try remaking the environment, but this time installing librosa from
+conda forge prior to installing TTS
+
+conda install -c conda-forge librosa
 
 ```
 

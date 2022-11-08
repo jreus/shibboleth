@@ -104,6 +104,7 @@
 
     <script>
       // Websockets Version (see Flask alternative in templates/index.html)
+      const TIME_THRESH = 200.0; // ms of no new text before sending to server
 
       let textArea = document.querySelector("#textarea")
       let lastText = textArea.value;
@@ -125,7 +126,6 @@
       let lastNewTextReceived = 0.0;
       let timeSinceLastNewText = 0.0;
       let textBuffer = [];
-      let newTextTimeThresh = 3000.0; // ms of no new text before sending to server
 
       function checkTextUpdate() {
         let currentText = textArea.value;
@@ -151,7 +151,7 @@
             lastNewTextReceived = Date.now();
           }
 
-          if(timeSinceLastNewText > newTextTimeThresh) {
+          if(timeSinceLastNewText > TIME_THRESH) {
             let sendText = textBuffer.join("");
             console.log(sendText);
             socket.send(sendText);
