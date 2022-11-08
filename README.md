@@ -46,16 +46,29 @@ If you're lucky, this is just a matter of creating a conda environment and insta
 conda create -n shibboleth python=3.9
 conda activate shibboleth
 conda install -c conda-forge python-sounddevice
-conda install -c conda-forge librosa
+conda install -c conda-forge websockets
+
+pip install TTS
+
+(at this point test that importing librosa and TTS works!)
+
+In case librosa doesn't work - you can try a few things:
+
+For GCC errors, maybe you need to update scipy
 conda update scipy
-(at this point test that importing librosa works!)
+
+Or you might need to update GCC...
+conda install -c conda-forge gcc=12.1.0
 
 You might need to set up some simlinks to fix librosa errors...
 ln -s libvorbis.0.dylib libvorbis.0.4.9.dylib
 ln -s libvorbisenc.2.dylib libvorbisenc.2.0.12.dylib
 
-conda install -c conda-forge websockets
-pip install TTS
+You could also try remaking the environment, but this time installing librosa from
+conda forge prior to installing TTS
+
+conda install -c conda-forge librosa
+
 ```
 
 For the flask server and VOSK STT you'll also need..
@@ -83,7 +96,7 @@ in a way that makes it clear what checkpoint is within the directory.
 ## Running the program
 
 Once all the above is in order, you can run shibboleth from within the `shibboleth`
-repository directory. You will actually need to run two programs: `shibboleth.py` and also a local web server to host the text editor. 
+repository directory. You will actually need to run two programs: `shibboleth.py` and also a local web server to host the text editor.
 
 ### 1. Start shibboleth
 
@@ -97,7 +110,7 @@ python shibboleth.py
 
 ### 2. Run the web server / text editor
 
-Open up a new terminal window and navigate to the shibboleth project folder. 
+Open up a new terminal window and navigate to the shibboleth project folder.
 Make sure your conda environment is activated, and then run the webserver using `python -m http.server`
 
 ```
