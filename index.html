@@ -103,15 +103,17 @@
     </div>
 
     <script>
+      // Websockets Version (see Flask alternative in templates/index.html)
+
       let textArea = document.querySelector("#textarea")
       let lastText = textArea.value;
 
-      // Create WebSocket connection.
+      // Create local WebSocket connection.
       const socket = new WebSocket('ws://localhost:8765');
 
       // Connection opened
       socket.addEventListener('open', (event) => {
-          socket.send('Hello Server!');
+          socket.send('Handshake!');
       });
 
       // Listen for messages
@@ -119,48 +121,54 @@
           console.log('Message from server ', event.data);
       });
 
-      // async function sendPostRequest(text, model) {
-      //     let url = '';
-      //     let data = {'text': text, 'cmd': 'synthesize', 'model': model};
-      //     let res = await fetch(url, {
-      //         method: 'POST',
-      //         headers: {
-      //             'Content-Type': 'application/json',
-      //         },
-      //         body: JSON.stringify(data),
-      //     });
-      //
-      //     if (res.ok) {
-      //         // let text = await res.text();
-      //         // return text;
-      //         let ret = await res.json();
-      //         return ret;
-      //     } else {
-      //         return `HTTP error: ${res.status}`;
-      //     }
-      // }
+      let timerRunning = false;
+      let lastNewTextReceived = 0.0;
+      let timeSinceLastNewText = 0.0;
+      let textBuffer = [];
+      let newTextTimeThresh = 3000.0; // ms of no new text before sending to server
 
-      function sendTextUpdate() {
+      function checkTextUpdate() {
         let currentText = textArea.value;
         // If lastText is present in currentText, remove it and examine what is left.
         if(currentText.includes(lastText)) {
           // Remove lastText from currentText
 
           // TODO: Do something more sophisticated here. So that we don't chop words in half
+          // When new text is encountered, buffer it and start a timer.
+          // If no new text is encountered, and this time is larger than some threshhold, send any buffered text to the server...
           let newText = currentText.replace(lastText, "");
-          if(newText != "") {
-            console.log(newText);
-            socket.send(newText);
-            // sendPostRequest(newText).then(data => {
-            //     console.log("Response:", data);
-            // });
+          if(newText == "") {
+            if(textBuffer.length > 0) {
+              if(!timerRunning) {
+                timerRunning = true;
+              }
+              timeSinceLastNewText = Date.now() - lastNewTextReceived;
+            }
+
+
+          } else { // New text found...
+            textBuffer.push(newText);
+            lastNewTextReceived = Date.now();
           }
+
+          if(timeSinceLastNewText > newTextTimeThresh) {
+            let sendText = textBuffer.join("");
+            console.log(sendText);
+            socket.send(sendText);
+
+            // Clear the textBuffer & state vars
+            timeSinceLastNewText = 0.0;
+            lastNewTextReceived = 0.0;
+            timerRunning = false;
+            textBuffer.length = 0;
+          }
+
         }
+
         lastText = currentText;
       }
 
-      // Regularly post the text to the server every 5 seconds..
-      let timer = setInterval(sendTextUpdate, 5000);
+      let timer = setInterval(checkTextUpdate, 500);
 
     </script>
 

@@ -48,7 +48,13 @@ conda activate shibboleth
 conda install -c conda-forge python-sounddevice
 conda install -c conda-forge websockets
 
+(all in one on linux - this seems to also install python 3.10 ...or am I crazy?)
+conda install -c conda-forge numpy=1.22.4 librosa=0.8.0 numba=0.55.2 python-sounddevice websockets
+
 pip install TTS
+
+(optional, but helps with audio errors on some systems)
+conda install -c conda-forge librosa=0.8
 
 (at this point test that importing librosa and TTS works!)
 
@@ -58,16 +64,18 @@ For GCC errors, maybe you need to update scipy
 conda update scipy
 
 Or you might need to update GCC...
+conda install -c anaconda libstdcxx-ng
+conda install -c conda-forge libstdcxx-ng
+or
 conda install -c conda-forge gcc=12.1.0
 
-You might need to set up some simlinks to fix librosa errors...
+conda install -c conda-forge gxx_linux-64==11.1.0
+It installs the latest version of GlibC compatible with your Conda environment.
+
+You might need to set up some simlinks to fix librosa errors on mac...
 ln -s libvorbis.0.dylib libvorbis.0.4.9.dylib
 ln -s libvorbisenc.2.dylib libvorbisenc.2.0.12.dylib
 
-You could also try remaking the environment, but this time installing librosa from
-conda forge prior to installing TTS
-
-conda install -c conda-forge librosa
 
 ```
 
