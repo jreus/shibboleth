@@ -7,10 +7,8 @@ import librosa
 import soundfile
 from logging import Logger
 from typing import List, Union, Any, Dict
-
-import torch
-import torchaudio
 import numpy as np
+import torch
 from TTS.tts.utils.synthesis import synthesis, trim_silence
 from TTS.utils.synthesizer import Synthesizer
 
@@ -22,6 +20,8 @@ class VoiceSynth:
         self.audio_write_path = Path(audio_write_path)
         self.use_cuda = use_cuda
         self.log = logger
+        self.tts = dict() # synthesizers / loaded models
+
 
         # Create audio write dir if does not exist...
         if self.audio_write_path.suffix != '':
@@ -31,6 +31,29 @@ class VoiceSynth:
         if not self.audio_write_path.exists():
             self.log.warning(f"Audio scratch path does not exist, creating: {self.audio_write_path}")
             os.makedirs(self.audio_write_path)
+
+    def load_model(self, name: str, model_path: str, model_config_path: str) -> None:
+        """
+        Load a single model given a model checkpoint path and config file path.
+        """
+        self.log.info(f"LOADING MODEL: {model_path}\nWITH CONFIG: {model_config_path}")
+
+        # Load model
+        self.tts[name] = dict()
+        print(f"Loading model {name}: {model_path}\nWith Config: {model_config_path}\n")
+        self.tts[name]["tts"] = Synthesizer(
+            str(model_path),
+            str(model_config_path),
+            use_cuda=self.use_cuda,
+        )
+        print(f"Done loading model: {name}")
+        self.tts[name]["model"] = self.tts[name]['tts'].tts_model
+        #self.tts[modelname]["ap"] = self.tts[modelname]["tts"].ap # TTS 0.5.0
+        self.tts[name]["ap"] = self.tts[name]["tts"].tts_model.ap # TTS > 0.6.0
+        self.tts[name]["config"] = self.tts[name]['tts'].tts_config
+        self.tts[name]["sr"] = self.tts[name]["ap"].sample_rate
+        self.tts[name]["arch"] = self.tts[name]["config"].model
+
 
 
     def load_models(self, model_specs: dict) -> None:
@@ -47,7 +70,6 @@ class VoiceSynth:
             tts_model_specs = dict()
             tts_model_root = None
 
-        self.tts = dict()
         for modelname, spec in tts_model_specs.items():
             model_path = os.path.join(tts_model_root, spec[0])
             model_config_path = os.path.join(tts_model_root, spec[1])
@@ -75,18 +97,13 @@ class VoiceSynth:
 
             # Load model
             self.tts[modelname] = dict()
+            print(f"Loading model: {model_path}\nWith Config: {model_config_path}\n")
             self.tts[modelname]["tts"] = Synthesizer(
-                model_path,
-                model_config_path,
-                speakers_file_path,
-                language_ids_file_path,
-                vocoder_model_path,
-                vocoder_config_path,
-                encoder_model_path,
-                encoder_config_path,
-                self.use_cuda,
+                str(model_path),
+                str(model_config_path),
+                use_cuda=self.use_cuda,
             )
-
+            print(f"Done loading model: {modelname}")
             self.tts[modelname]["model"] = self.tts[modelname]['tts'].tts_model
             #self.tts[modelname]["ap"] = self.tts[modelname]["tts"].ap # TTS 0.5.0
             self.tts[modelname]["ap"] = self.tts[modelname]["tts"].tts_model.ap # TTS > 0.6.0

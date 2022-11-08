@@ -6,10 +6,15 @@ import json
 from pathlib import Path
 import asyncio
 import websockets
-import numpy as np
+#import numpy as np
 from datetime import datetime
+import torch
+from TTS.utils.synthesizer import Synthesizer
+torch.set_grad_enabled(False) # we're only doing inference
+
 import sounddevice as sd
-from voicesynth import VoiceSynth
+
+import voicesynth
 
 class ShibbolethWSS(object):
     async def handler(self, websocket, path):
@@ -23,6 +28,7 @@ class ShibbolethWSS(object):
     async def main(self, synth):
         self.voicesynth = synth
         self.filenum = 0
+        print("Starting websockets server...")
         async with websockets.serve(self.handler, "localhost", 8765):
             await asyncio.Future()  # run forever
 
@@ -127,7 +133,17 @@ if __name__ == "__main__":
     # Set up TTS model.
     AUDIO_WRITE_PATH = args.output_path.resolve() # audio renders go here
     TTS_MODEL_TYPE = "vits"
+    TTS_MODEL_NAME = args.voice
     USE_CUDA = args.use_cuda
+
+    # print(f"Loading model: {TTS_MODEL_PATH}\nWith Config: {TTS_CONFIG_PATH}\n")
+    # VOICE_SYNTH = Synthesizer(
+    #     str(TTS_MODEL_PATH),
+    #     str(TTS_CONFIG_PATH),
+    #     use_cuda=USE_CUDA,
+    # )
+    # print("Done loading model")
+
     tts_model_spec = { 'tts_model_root_path': args.model_path, 'tts': None }
     tts_model_spec['tts'] = {
         "vits": [
@@ -136,8 +152,9 @@ if __name__ == "__main__":
             None, None, None, None, None, None
         ]
     }
-
-    VOICE_SYNTH = VoiceSynth(AUDIO_WRITE_PATH, USE_CUDA, logging.getLogger("VoiceSynthesizer"))
+    VOICE_SYNTH = None
+    VOICE_SYNTH = voicesynth.VoiceSynth(AUDIO_WRITE_PATH, USE_CUDA, logging.getLogger("VoiceSynthesizer"))
+    #VOICE_SYNTH.load_model(TTS_MODEL_NAME, TTS_MODEL_PATH, TTS_CONFIG_PATH)
     VOICE_SYNTH.load_models(tts_model_spec)
 
     shib = ShibbolethWSS()
