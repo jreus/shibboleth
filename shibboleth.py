@@ -32,14 +32,15 @@ class ShibbolethWSS(object):
                     print("...ignoring empty text...")
                 await websocket.send(message) # echo message back to the client
 
-    async def main(self, synth, system_samplerate, system_device):
+    async def main(self, synth, system_samplerate, system_device, args):
         self.voicesynth = synth
         self.filenum = 0
         self.device_samplerate = system_samplerate
         self.device = system_device
-        testtext = "Starting the Shibboleth, this is just a test. Please say the words as I repeat them."
 
-        self.synthesize_and_play(testtext)
+        if not args.no_test_sound:
+            testtext = "Starting the Shibboleth, this is just a test. Please say the words as I repeat them."
+            self.synthesize_and_play(testtext)
 
         print("Starting websockets server...")
         async with websockets.serve(self.handler, "localhost", 8765):
@@ -101,6 +102,8 @@ if __name__ == "__main__":
 
     INPUT_ONLY = namespace.input_only
     VOICE = namespace.voice
+
+    parser.add_argument("--no-test-sound", action="store_true", help="If present, no test sound is played.")
 
     parser.add_argument(
         "-d", "--output-device", type=int_or_str,
@@ -213,4 +216,4 @@ if __name__ == "__main__":
     print(f"Playing with SR: {DEV_SAMPLERATE} on device: {DEVICE}")
 
     shib = ShibbolethWSS()
-    asyncio.run(shib.main(VOICE_SYNTH, DEV_SAMPLERATE, DEVICE))
+    asyncio.run(shib.main(VOICE_SYNTH, DEV_SAMPLERATE, DEVICE, args))
