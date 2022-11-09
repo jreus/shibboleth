@@ -38,7 +38,7 @@ class ShibbolethWSS(object):
         self.device_samplerate = system_samplerate
         self.device = system_device
 
-        if not args.no_test_sound:
+        if args.test:
             testtext = "Starting the Shibboleth, this is just a test. Please say the words as I repeat them."
             self.synthesize_and_play(testtext)
 
@@ -103,7 +103,7 @@ if __name__ == "__main__":
     INPUT_ONLY = namespace.input_only
     VOICE = namespace.voice
 
-    parser.add_argument("--no-test-sound", action="store_true", help="If present, no test sound is played.")
+    parser.add_argument("--test", action="store_true", help="If present, no test sound is played.")
 
     parser.add_argument(
         "-d", "--output-device", type=int_or_str,

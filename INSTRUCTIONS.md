@@ -48,9 +48,9 @@ For the `amir` voice run the command: `python shibboleth.py --voice amir`
 You may need to choose an audio output device for the voice synthesis to play back.
 You can see a list of the available devices with the command: `python shibboleth.py --list-devices`
 
-# Silencing the Test Introduction Sentence
+# Playing the Test Introduction Sentence
 
-You can start the shibboleth server without the test sentence using: `python shibboleth.py --no-test-sound`
+You can start the shibboleth server with a test sentence: `python shibboleth.py --test`
 
 # To Update the Software When Changes Have Been Made
 
