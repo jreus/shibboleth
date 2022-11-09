@@ -47,3 +47,12 @@ For the `amir` voice run the command: `python shibboleth.py --voice amir`
 
 You may need to choose an audio output device for the voice synthesis to play back.
 You can see a list of the available devices with the command: `python shibboleth.py --list-devices`
+
+# Silencing the Test Introduction Sentence
+
+You can start the shibboleth server without the test sentence using: `python shibboleth.py --no-test-sound`
+
+# To Update the Software When Changes Have Been Made
+
+1. Open a terminal window and navigate to the shibboleth directory with: `cd ~/shibboleth`
+2. "Pull" the latest updates with the command: `git pull`
