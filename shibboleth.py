@@ -100,6 +100,7 @@ if __name__ == "__main__":
         parser.exit(0)
 
     INPUT_ONLY = namespace.input_only
+    VOICE = namespace.voice
 
     parser.add_argument(
         "-d", "--output-device", type=int_or_str,
@@ -161,8 +162,8 @@ if __name__ == "__main__":
 
     # Check if model-path is set. Confirm files exist.
     if args.model_path is None:
-        print(f"No model_path specified, using voice '{args.voice}': {DEFAULT_MODELS[args.voice]}")
-        args.model_path = DEFAULT_MODELS[args.voice]['path']
+        print(f"No model_path specified, using voice '{VOICE}': {DEFAULT_MODELS[args.voice]}")
+        args.model_path = DEFAULT_MODELS[VOICE]['path']
 
     if args.model_path.exists():
         for checkpoint in args.model_path.glob('*.pth'):
