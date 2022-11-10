@@ -68,7 +68,8 @@ You can test your audio output by starting the shibboleth server with a test sen
 
 With the command: `python shibboleth.py --test`
 
-https://github.com/jreus/shibboleth/blob/main/exampleaudio/test-sentence.wav
+[test-sentence.webm](https://user-images.githubusercontent.com/1451059/201065782-b9b7e8d5-a0f0-4a97-9a5b-c99c6b30787b.webm)
+
 
 # To Update the Software When Changes Have Been Made
 
