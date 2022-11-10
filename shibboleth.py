@@ -39,7 +39,7 @@ class ShibbolethWSS(object):
         self.device = system_device
 
         if args.test:
-            testtext = "Starting the Shibboleth, this is just a test. Please say the words as I repeat them."
+            testtext = "Please say the words as I repeat them. Shibboleths have been used throughout history in many societies as passwords, simple ways of self-identification, signaling loyalty and affinity, maintaining traditional segregation, or protecting from real or perceived threats."
             self.synthesize_and_play(testtext)
 
         print("Starting websockets server...")

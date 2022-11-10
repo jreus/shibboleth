@@ -104,7 +104,7 @@
 
     <script>
       // Websockets Version (see Flask alternative in templates/index.html)
-      const TIME_THRESH = 200.0; // ms of no new text before sending to server
+      const TIME_THRESH = 4000.0; // ms of no new text before sending to server
 
       let textArea = document.querySelector("#textarea")
       let lastText = textArea.value;
@@ -168,7 +168,7 @@
         lastText = currentText;
       }
 
-      let timer = setInterval(checkTextUpdate, 500);
+      let timer = setInterval(checkTextUpdate, 50);
 
     </script>
 

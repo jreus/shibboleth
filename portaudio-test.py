@@ -75,6 +75,3 @@ if __name__ == "__main__":
     print(f"Playing with SR: {sr} on device: {DEVICE}")
     sd.play(wavdata, blocking=False, device=DEVICE)
     sd.wait()
-
-    # shib = ShibbolethWSS()
-    # asyncio.run(shib.main(VOICE_SYNTH, SAMPLE_RATE, DEVICE))
