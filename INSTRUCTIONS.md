@@ -92,9 +92,12 @@ This will give you a list of audio devices, each beginning with a number. To sel
 
 # Playing the Test Introduction Sentence
 
-You can start the shibboleth server with a test sentence using the `--test` option.
+You can test your audio output by starting the shibboleth server with a test sentence using the `--test` option.
 
 With the command: `python shibboleth.py --test`
+
+[test-sentence.webm](https://user-images.githubusercontent.com/1451059/201065782-b9b7e8d5-a0f0-4a97-9a5b-c99c6b30787b.webm)
+
 
 # To Update the Software When Changes Have Been Made
 
