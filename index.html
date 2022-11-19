@@ -109,8 +109,25 @@
       let textArea = document.querySelector("#textarea")
       let lastText = textArea.value;
 
+      let websockets_port = 8765;
+
+      const queryString = window.location.search;
+      console.log("Got queryString: ", queryString);
+      // ?product=shirt&color=blue&newuser&size=m
+      const urlParams = new URLSearchParams(queryString);
+      let ws_host = urlParams.get('host');
+      let ws_port = urlParams.get('port');
+      console.log("Got Host:"+ws_host+" and Port:"+ws_port);
+      if(!ws_host) {
+        ws_host = "localhost";
+      }
+      if(!ws_port) {
+        ws_port = 8765;
+      }
+      let wss_address = "ws://"+ws_host+":"+ws_port;
+
       // Create local WebSocket connection.
-      const socket = new WebSocket('ws://localhost:8765');
+      const socket = new WebSocket(wss_address);
 
       // Connection opened
       socket.addEventListener('open', (event) => {

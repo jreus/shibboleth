@@ -155,7 +155,7 @@ def recv_text():
     print(f"Got '{txt}'")
     # Synthesize & Play Audio
     wav,sr,wavfile = synthesize(text=txt, filenum=FILE_NUM, synth=VOICE_SYNTH)
-    FILE_NUM +=1
+    flask.g.FILE_NUM +=1
     sd.play(wav, sr)
     return flask.jsonify({'response': "Success!", 'received': txt})
 

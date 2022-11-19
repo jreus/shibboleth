@@ -32,18 +32,19 @@ class ShibbolethWSS(object):
                     print("...ignoring empty text...")
                 await websocket.send(message) # echo message back to the client
 
-    async def main(self, synth, system_samplerate, system_device, args):
+    async def main(self, synth, system_samplerate, system_device, ws_bind_ip, args):
         self.voicesynth = synth
         self.filenum = 0
         self.device_samplerate = system_samplerate
         self.device = system_device
+        self.ws_bind_host, self.ws_bind_port = ws_bind_ip
 
         if args.test:
             testtext = "Please say the words as I repeat them. Shibboleths have been used throughout history in many societies as passwords, simple ways of self-identification, signaling loyalty and affinity, maintaining traditional segregation, or protecting from real or perceived threats."
             self.synthesize_and_play(testtext)
 
-        print("Starting websockets server...")
-        async with websockets.serve(self.handler, "localhost", 8765):
+        print(f"Starting websockets server, listening on {ws_bind_ip}...")
+        async with websockets.serve(self.handler, self.ws_bind_host, self.ws_bind_port):
             await asyncio.Future()  # run forever
 
     def synthesize_and_play(self, text: str):
@@ -91,17 +92,23 @@ if __name__ == "__main__":
     )
 
     parser.add_argument("--input_only", action="store_true", help="If present, no synthesis is done - only text input to the texteditor GUI.")
-
     parser.add_argument("-v", "--voice", type=str, default="effiamir", help="The voice to use: effiamir | amir | effi")
+    parser.add_argument("-h", "--host", type=str, default="localhost", help="Websockets Server Host (default is localhost)")
+    parser.add_argument("-p", "--port", type=int, default=8765, help="Websockets Server port (default is 8765)")
 
     namespace, remaining_args = parser.parse_known_args()
 
     if namespace.list_devices:
+        print("Listing devices...")
         print(sd.query_devices())
+        print("Exit.")
         parser.exit(0)
 
     INPUT_ONLY = namespace.input_only
     VOICE = namespace.voice
+    HOST = namespace.host
+    PORT = namespace.port
+    BIND_IP = (HOST, PORT)
 
     parser.add_argument("--test", action="store_true", help="If present, no test sound is played.")
 
@@ -216,4 +223,7 @@ if __name__ == "__main__":
     print(f"Playing with SR: {DEV_SAMPLERATE} on device: {DEVICE}")
 
     shib = ShibbolethWSS()
-    asyncio.run(shib.main(VOICE_SYNTH, DEV_SAMPLERATE, DEVICE, args))
+    try:
+        asyncio.run(shib.main(VOICE_SYNTH, DEV_SAMPLERATE, DEVICE, BIND_IP, args))
+    except KeyboardInterrupt as ke:
+        print("Received CTRL+C ... exit server.")

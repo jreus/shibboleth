@@ -52,6 +52,34 @@ To use the `effi` voice run the command: `python shibboleth.py --voice effi`
 For the `amir` voice run the command: `python shibboleth.py --voice amir`
 
 
+# (ADVANCED) Selecting a Port for the Shibboleth Websockets Server
+
+By default the shibboleth server binds to port 8765 for its websockets connection
+to the browser app. But you may want to run it on a different port.
+For example, port 8654 might be used by another application. Or you might want to run
+multiple shibboleth servers with different voices on multiple ports.
+
+You can choose the port using the  `--port` option. So, for example, to run the
+server on port 10000 you launch it with the command: `python shibboleth.py --port 10000`
+
+_IMPORTANT!_ If you change the websockets port here you must also change the URL
+you use to access the text editor web page. For the websockets port 10000
+you need to use the website `http://localhost:8000/?port=10000`
+
+
+Multiple options can also be combined by listing them one after another.
+For example, to run the server using the effi voice on port 11111 would write:
+```
+python shibboleth.py --voice effi --port 11111
+```
+
+For the websockets port 11111 you need to use the website `http://localhost:8000/?port=11111`
+
+
+
+
+
+
 # Choosing an Audio Output Device
 
 You may need to choose an audio output device for the voice synthesis to play back.
